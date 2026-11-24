@@ -1,0 +1,247 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,booktabs,geometry,xcolor,hyperref}
+\geometry{a4paper,top=24mm,bottom=24mm,left=25mm,right=25mm,headheight=14pt}
+\definecolor{linkink}{RGB}{19,73,85}
+\hypersetup{colorlinks=true,urlcolor=linkink,citecolor=linkink,linkcolor=linkink,
+ pdftitle={A rotation-class completion criterion for seven-symbol superpermutations},
+ pdfauthor={Jaehun Jung},pdfsubject={Completion thresholds for seven-symbol superpermutations}}
+\urlstyle{same}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newenvironment{proof}[1][Proof]{\par\smallskip\noindent\textit{#1.}\enspace}{\unskip\nobreak\hfill\ensuremath{\square}\par\smallskip}
+\setlength{\emergencystretch}{2em}
+\pagestyle{myheadings}
+\markright{\small J. Jung\hfill Rotation-class completion on seven symbols\hspace{1.2em}}
+\title{A rotation-class completion criterion for seven-symbol superpermutations}
+\author{Jaehun Jung\\[4pt]{\small Independent Researcher, Republic of Korea}}
+\date{24 November 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+We prove that $M_k+7(720-k)=L(7)$ for every integer $91\le k\le720$, where $L(7)$ is the minimum length of a seven-symbol superpermutation and $M_k$ is the minimum length of a word that visits all 720 rotation classes and completes at least $k$. A six-letter factor with distinct symbols determines the class it visits. Completion requires all seven cyclic shifts to occur. At $k=91$, a superpermutation of length at most 5,904 exists exactly when a word of length 1,501 visits every class and completes 91. Our examples visit all 720 classes, completing 90 at length 1,501 and 91 at length 1,502. Halfar's computer-assisted lower bound and Teodorescu's word W-0021 give $5901\le L(7)\le5905$. We prove that 5,905 is optimal for words retaining a prescribed 463-edge residual route and at least 63 six-edge wheels, and for words with the exceptional support of any of 98 record classes in Halfar's catalogue. Whether 5,905 is optimal over all words remains open.
+\end{abstract}
+\noindent\textit{Keywords.} Superpermutations, rotation classes, Euler trails, shortest common superstrings, computer-assisted proof.
+
+\section{Introduction}
+A superpermutation on an alphabet $A$ contains each permutation of $A$ as a contiguous factor. Write $L(n)$ for the least possible length when $|A|=n$. A central difficulty is that independently cheap overlaps between permutations must occur in a single word. Houston used a weighted overlap graph and an asymmetric travelling salesman formulation to obtain a construction for six symbols~\cite{houston}. For seven symbols, Halfar's computer-assisted proof and Teodorescu's explicit word W-0021 give
+\begin{equation}
+       5901\leq L(7)\leq 5905. \label{eq:sevenbounds}
+\end{equation}
+The lower endpoint invokes external finite searches in addition to Halfar's Lean reduction~\cite{halfar}. The upper endpoint follows by reading all 5,040 permutation factors in W-0021~\cite{teodorescu}.
+
+This paper studies how much of a shortest word can be removed while preserving access to every rotation class. For example, the context $012345$ identifies the class of $0123456$, even if the next letter in the word is a second $5$. At that context one can insert $6012345$, spelling all seven rotations and returning to the same context. Visiting a class is therefore enough to complete it later at a cost of seven letters. This observation gives one inequality for the shortest partial word immediately. The reverse inequality requires controlling how many complete rotation cycles connect the pieces of a short superpermutation after its mandatory permutation edges have been removed.
+
+Theorem~\ref{thm:sevencurve} gives equality for every threshold from 91 to 720 completed classes. Corollary~\ref{cor:decision} isolates a single one-letter boundary at threshold 91. We then establish the exact minimum in two restricted settings and give a lower bound on the number of letters needed to extend a fixed prefix. The concluding section describes a Boolean instance whose checked refutation would settle the unrestricted problem.
+
+\section{Rotation classes and the residual graph}
+\label{sec:graph}
+
+
+Fix the alphabet $A=\{0,\ldots,6\}$. The seven cyclic shifts of a
+permutation form a \emph{rotation class}. There are $7!/7=720$ classes.
+A six-letter factor $u$ with distinct symbols has a unique missing symbol
+$x$ and hence a label, the rotation class of $ux$. A word \emph{visits}
+this class when $u$ occurs, including at the right end of the word.
+It \emph{completes} the class when each of its seven permutations occurs
+as a contiguous factor. Let $V(v)$ and $C(v)$ count the classes visited
+and completed by $v$, and put
+\[
+ M_k=\min\{\,|v|: V(v)=720,\ C(v)\ge k\,\}.
+\]
+The minimum exists since W-0021 qualifies for every $0\le k\le720$.
+
+A seven-letter factor is an edge from its six-letter prefix to its
+six-letter suffix. A word of length $\ell\ge6$ spells a walk of
+$\ell-6$ edges. Let $D$ contain each of the $5{,}040$ permutation edges
+once. These edges split into the $720$ directed seven-cycles of the
+rotation classes. Deleting $D$ from the edge multiset of a superpermutation
+$w$ leaves a multiset $X$ of size $|w|-5046$. For initial and terminal
+contexts $s,t$, its degrees satisfy
+\[
+  \operatorname{out}_X(u)-\operatorname{in}_X(u)
+  =\mathbf1_{u=s}-\mathbf1_{u=t}.
+\]
+Call $X$ \emph{feasible} for $s,t$ when this identity holds and every
+edge in $D+X$ has its source reachable from $s$ in $D+X$. These conditions
+permit an Euler walk of $D+X$ from $s$ to $t$ and hence a word with precisely
+those edge multiplicities. In particular $|w|\le5904$ gives $|X|\le858$.
+
+We use two different cycles in this graph. At a visited class with context $u$ and missing symbol $x$, appending $xu$ completes its seven-cycle and returns the walk to $u$. A \emph{wheel} is the six-edge
+circuit obtained by appending the six distinct symbols of $u$ in their
+original order. Its six rotated contexts label six different classes.
+The seven-cycle is the operation counted by $7(720-k)$ below.
+
+\section{Completion thresholds}
+\label{sec:thresholds}
+
+\begin{lemma}[Residual component bound]\label{lem:sevencap}
+If $X$ is feasible for $s,t$ and $|X|\le858$, at most $91$ weak
+components of $X$ outside the component of $s$ contain an edge.
+\end{lemma}
+
+\noindent\emph{Structure of the certificate.}
+The proof also counts wheels already extracted from $X$. Write
+$X=Y+T$, with $T$ the multiset sum of $a$ complete wheels, and let $b$
+count the noninitial edge-containing components of $Y$. The checked
+inequalities first give $a+b\le92$ and
+$3(a+b)+22B\le308$, where $B$ counts those $b$ components having at
+least seven edges. At $a+b=92$ there is at most one such component.
+A short noninitial component in this boundary analysis is itself a wheel.
+If all are short, extracting them would give 92 wheels and a complementary
+306-edge route visiting 260 classes. The finite check in
+\texttt{NormalizedClosed306} and \texttt{Cap92Lookup} rules out the
+required connected coverage. Starting from the route labels, one must be able to reach all 720 labels by adjoining wheels that meet the current union.
+
+With one long component, the edge and contact counts leave six numerical
+profiles. The density bound $71c\le60e$ for the long closed routes of
+length $e\ge105$ considered here ($c$ is their number of labels), and the
+period constraint on a 28-edge circuit, leave a 277-edge initial route
+with 236 labels and a 35-edge circuit with 30. After normalization the
+initial label set has six possible forms. The connected-cover tests for
+these sets and the possible 35-edge circuits are discharged in
+\texttt{Mixed277} and \texttt{MixedRootsExcluded}. The resulting statement
+$a+b\le91$, specialized to $a=0$, is
+\texttt{EqualityComponent91.component\_limit}. 
+
+\begin{theorem}[Minimum length at a completion threshold]\label{thm:sevencurve}
+For $91\le k\le720$,
+\begin{equation}
+  M_k+7(720-k)=L(7).\label{eq:sevencurve}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Given $v$ in the defining set for $M_k$, insert a seven-cycle at an
+occurrence of a labelled context for each incomplete class. Each insertion
+returns to the original context and preserves the previous walk, so the
+resulting word is a superpermutation of length at most
+$|v|+7(720-k)$.
+
+For the reverse inequality take a shortest superpermutation $w$. First
+suppose $|w|\le5904$. Feasibility guarantees that each class has a
+labelled context among $s$ and the endpoints of the edges of $X$. Indeed,
+in $D+X$ its mandatory cycle is reachable, and only a residual edge or
+the initial context can first enter it. Start at the component of $s$ in
+$X$. As long as a residual component remains disconnected from it, choose
+a mandatory seven-cycle meeting both the reached part and a fresh
+residual component. Such a cycle exists because $D+X$ is reachable and
+different mandatory cycles have disjoint context sets. Add that cycle.
+Each addition reaches another residual component with an edge, so
+Lemma~\ref{lem:sevencap} requires at most 91 selected cycles. The initial
+component of the augmented graph now contains an anchor for every class,
+as well as every edge of each selected cycle. Its degree balance permits an Euler walk. Suppose $j$ cycles were selected. Spelling the walk uses at most $6+|X|+7j$ letters and completes at least those $j$ classes. Insert at most $k-j$ further seven-cycles to reach $k$ completions. Its length is at most
+\[
+  6+|X|+7k=|w|-7(720-k).
+\]
+
+If $|w|>5904$, equation~\eqref{eq:sevenbounds} gives $|w|=5905$.
+Deleting 653 designated nonoverlapping seven-edge laps from W-0021
+gives an explicit word of length 1,334 visiting all classes and
+completing 67. The theorem \texttt{ComponentCurve.reference653} verifies these
+three counts. Inserting $k-67$ cycles gives the required upper bound
+$1334+7(k-67)=5905-7(720-k)$. This proves~\eqref{eq:sevencurve}
+in both cases.
+\end{proof}
+
+\section{A one-letter boundary for 91 completions}
+\label{sec:decision}
+\begin{corollary}\label{cor:decision}
+A seven-symbol superpermutation of length at most 5,904 exists if and only if a word of length exactly 1,501 visits every rotation class and completes 91. Among words of that length with all visits, the maximum number of completions is either 90 or 91.
+\end{corollary}
+\begin{proof}
+Putting $k=91$ in~\eqref{eq:sevencurve} gives $L(7)=M_{91}+4403$.
+In particular, $1498\le M_{91}\le1502$ by~\eqref{eq:sevenbounds}.
+At $k=108$ the same theorem gives $M_{108}=M_{91}+119$.
+For the following witnesses, read W-0021 from left to right. At each noninitial position $i$ where the next thirteen letters have the form $uxu$ with $u$ a six-letter context of distinct symbols and $x$ its missing symbol, mark the first seven positions. There are 653 such starts and the marked blocks are disjoint. Delete the first 629 blocks.
+\texttt{Core1501.controls} checks both words against the definitions.
+\begin{center}
+\begin{tabular}{@{}lrrr@{}}\toprule
+Construction & Length & Visited & Completed \\ \midrule
+Delete 629 laps & 1,502 & 720 & 91 \\
+Delete the first letter of that word & 1,501 & 720 & 90 \\
+\bottomrule\end{tabular}
+\end{center}
+A word of length at most 1,501 visiting all classes cannot complete 92. Inserting at most $720-92$ seven-cycles would give a superpermutation of
+length at most $1501+7\cdot628=5897$, already below the formally
+verified lower bound 5,899 \cite{halfar}. Repeating a word's first
+letter at its beginning adds one six-context and one seven-factor
+containing a repeated letter, and preserves both counts. Thus the maximum
+number of completed classes at length 1,501 among words visiting all classes
+is either 90 or 91. In the former case $L(7)=5905$. In the latter case a
+word of length at most 5,904 exists. It follows that $L(7)=5905$ if and only if every word of length at most 1,620 that visits all classes completes at most 107.
+
+\end{proof}
+
+\section{Two families with minimum length 5,905}
+\subsection{A prescribed residual route}
+The route \texttt{ResidualControls.mainWord} in W-0021 uses 463 edges and visits 390 classes. Fix its edge multiset. Among
+superpermutations whose residual edges contain this multiset together
+with at least 63 whole wheels, the exact minimum is 5,905. Containment
+counts multiplicities and places no requirement on the order in which
+the walk reads the prescribed edges. With 63 selected wheels the least
+number of additional residual edges is 18, and with 64 it is 12. Both budgets give the same length, since
+$6+5040+463+6\cdot63+18=5905$ and $6\cdot64+12=6\cdot63+18$.
+For the 63-wheel lower bound the budget at length 5,904 leaves 17
+additional edges. The degree and connectivity constraints force a circuit
+among them. A loop can be removed. Another wheel reduces the question to
+the 64-wheel bound. For a nonwheel circuit with at least two edges, a count
+of rotation labels forces its length to be at most 12, leaving at least
+five edges that must extend the ends of the fixed route. The extension
+loses a further label, contradicting coverage. These alternatives are
+formalized in \texttt{Reference63.no\_seventeen}. The matching witness
+and the case of more wheels give \texttt{Reference63.restricted\_minimum}.
+
+\subsection{Exceptional supports from 98 recorded words}
+Let $P$ send each permutation to its successor in a cyclic ordering of the 5,040 permutations, and let $R$ be left rotation. In the cycle decomposition of $R^{-1}P$, remove the fixed points and the ordinary cycles that hold the first symbol fixed while rotating the other six. The remaining permutations form the exceptional support. For each of the 98 archived record classes in Halfar's catalogue~\cite{ties}, keeping this support fixed still forces length at least 5,905, even when its elements are reordered or split into several cycles, the ordinary cycles are changed, and the position where the order is opened into a word is chosen freely. The record itself attains the bound in each case.
+
+The finite certificates assign a departure price and an arrival price to each exceptional permutation, with a further unit charged on exiting a designated group. Each pair of consecutive elements satisfies its price inequality. A group with no exit contains an entire cycle, whose charge is already present in the length formula. Summation gives a single lower bound for all orders on that support. The supplement includes the 98 price tables, the Lean check \texttt{ArchiveOrders.all\_cycle\_partitions}, and a script that matches the literal supports to the source words. An arbitrary short word may have a different exceptional support.
+
+\section{Excluding an entire prefix}
+The two operations counted by a partial word obey a useful local restriction. For a word $u$ of length at least six, write $P(u)$ for the number of distinct seven-symbol permutations occurring in $u$. The following test uses no advance knowledge of which classes will be completed.
+\begin{proposition}\label{prop:prefix}
+If $ur$ visits every rotation class and completes at least 91, then
+\[
+                    V(u)+P(u)+|r|\ge 1{,}357.
+\]
+\end{proposition}
+\begin{proof}
+Fix any 91 classes completed by $ur$. They require $7\cdot91=637$ distinct permutation factors. Give one unit of credit for the first visit to each of the 720 classes and one for the first occurrence of each of these 637 permutations. Extending $u$ by one letter creates at most one new six-letter context and one new seven-letter factor. If the new factor is a permutation, its prefix and suffix contexts label the same rotation class, so the suffix cannot be its first visit. Each new letter therefore earns at most one credit. The prefix has earned at most $V(u)+P(u)$ and the completed word has earned $720+637$.
+\end{proof}
+For example, the first 1,469 letters of the length-1,501 control in Section~\ref{sec:decision} satisfy $V(u)=716$ and $P(u)=608$. Completing 91 classes while visiting all 720 requires at least $1357-716-608=33$ further letters. This excludes every one of the $7^{32}$ length-1,501 extensions of this prefix. The prefix and the bound are checked in \texttt{PrefixCharge}. 
+
+\section{A certified encoding of the remaining decision}\label{sec:sat}
+The fixed-length decision admits a Boolean encoding with $1{,}462{,}260$
+variables and $5{,}679{,}593$ clauses. For each six-context the circuit
+records its rotation label when its symbols are distinct. A following
+permutation factor contributes its terminal symbol as a mark. For a given
+class the seven possible marks distinguish its seven permutations. The
+final six-context contributes a visit. The circuit groups records by label,
+combines their marks, and tests both thresholds. The Lean theorem
+\texttt{counterexample\_all\_rows} in \texttt{CompactCounterexample.lean} constructs a satisfying assignment
+for every qualifying word. This implication suffices to deduce $L(7)=5905$
+from a checked refutation of the whole formula. Two separately verified
+symmetries allow first-occurrence ordering of the alphabet and simultaneous
+fixing of 1,023 routing switches, respectively. No checked refutation of the full instance is available, so the 1,501-letter decision remains open. The original instance has SHA-256 digest
+\begin{center}\small\ttfamily
+dd6e2ee06c613845e722b0df3bd57d01ad188a7d13ca9b42a60c488fdcd015bd
+\end{center}
+
+
+
+\section{Conclusion and reproducibility}
+The equality $M_{91}+4403=L(7)$ specifies what either outcome would establish. A length-1,501 witness with 91 completions would yield a superpermutation of length at most 5,904 by completing the remaining classes. A universal upper bound of 90 completions at that length would make W-0021 optimal. The verified examples attain 90 at length 1,501 and 91 one letter later.
+
+The supplementary archive includes the Lean source for the component bound and the completion theorem, the 98 finite price certificates, instructions for rebuilding the Boolean instance, and a direct Python check of the witness words. The main equality is formalized in \texttt{StoppingCriterion.minimum\_length}. The bound of 91 completions uses the formally verified 5,899 lower bound for $L(7)$. Finite checks in the development use \texttt{native\_decide}, and certain finite subinstances have separately checked LRAT refutations. The verification guide identifies the Lean toolchains and the pinned upstream libraries.
+
+\paragraph{Author contributions and use of AI.}
+Jaehun Jung set the research questions, directed the sequence of investigations, and specified the standard of verification. OpenAI Codex (GPT-6) was used to develop proof arguments, write Lean and verification code, conduct computational experiments, and draft the manuscript. The constructions, external bounds, and formal libraries used here are credited in the references and the supplement.
+
+\begin{thebibliography}{9}
+\bibitem{houston} R. Houston, \emph{Tackling the Minimal Superpermutation Problem}, arXiv:1408.5108 (2014). \href{https://arxiv.org/abs/1408.5108}{Preprint}.
+\bibitem{halfar} J. Halfar, \emph{A superpermutation on seven symbols has at least 5,901 letters}, proof and certificate inventory, revision \texttt{8e3c02b} (2026). \href{https://github.com/jhalfar/superpermutations/tree/8e3c02b5234b49a1422751f86f9e472706082374/proofs/n7_5901}{Proof and computation} and \href{https://github.com/jhalfar/superpermutation-almanac-lean/tree/a09f9ef4ebb74ae1297f17c5fad38296695f2959}{Lean library}.
+\bibitem{ties} J. Halfar, \emph{Seven-symbol record classes}, catalogue and source inventory (2026). \href{https://github.com/jhalfar/superpermutations/tree/main/ties}{Catalogue}.
+\bibitem{teodorescu} A. Teodorescu, W-0021, \emph{Superpermutation Almanac}, 17 August 2026. \href{https://superpermutations.com/w/W-0021}{Word and coverage statistics}.
+\end{thebibliography}
+\end{document}
