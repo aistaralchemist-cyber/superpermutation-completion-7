@@ -25,15 +25,17 @@ We prove that $M_k+7(720-k)=L(7)$ for every integer $91\le k\le720$, where $L(7)
 \noindent\textit{Keywords.} Superpermutations, rotation classes, Euler trails, shortest common superstrings, computer-assisted proof.
 
 \section{Introduction}
-A superpermutation on an alphabet $A$ contains each permutation of $A$ as a contiguous factor. Write $L(n)$ for the least possible length when $|A|=n$. A central difficulty is that independently cheap overlaps between permutations must occur in a single word. Houston used a weighted overlap graph and an asymmetric travelling salesman formulation to obtain a construction for six symbols~\cite{houston}. For seven symbols, Halfar's computer-assisted proof and Teodorescu's explicit word W-0021 give
+A superpermutation on an alphabet $A$ contains each permutation of $A$ as a contiguous factor. Write $L(n)$ for its minimum length on $n$ symbols. Ashlock and Tillotson~\cite{ashlock} obtained the lower bound $n!+(n-1)!+n-2$ by counting the letters needed to move between cyclic classes. Engen and Vatter~\cite[\S2]{engenvatter} explain this count and give the anonymous lower-bound argument that also charges changes of trajectory. It gives $n!+(n-1)!+(n-2)!+n-3$. Both counts apply to a word that completes every class. Houston~\cite{houston} used a different formulation, a weighted overlap graph on all permutations, to construct a six-symbol word of length 872.
+
+For $n\ge5$, Halfar's defect formulation~\cite{halfardefect} relates the existence of a full superpermutation at a prescribed length to that of a configuration of the corresponding defect. For seven symbols, his computer-assisted lower bound~\cite{halfar} and Teodorescu's word W-0021~\cite{teodorescu} give
 \begin{equation}
        5901\leq L(7)\leq 5905. \label{eq:sevenbounds}
 \end{equation}
-The lower endpoint invokes external finite searches in addition to Halfar's Lean reduction~\cite{halfar}. The upper endpoint follows by reading all 5,040 permutation factors in W-0021~\cite{teodorescu}.
+The 5,901 endpoint uses external finite searches in addition to a Lean reduction. The proof of the threshold identity below uses W-0021 and is independent of those external searches.
 
-This paper studies how much of a shortest word can be removed while preserving access to every rotation class. For example, the context $012345$ identifies the class of $0123456$, even if the next letter in the word is a second $5$. At that context one can insert $6012345$, spelling all seven rotations and returning to the same context. Visiting a class is therefore enough to complete it later at a cost of seven letters. This observation gives one inequality for the shortest partial word immediately. The reverse inequality requires controlling how many complete rotation cycles connect the pieces of a short superpermutation after its mandatory permutation edges have been removed.
+Here a partial word must reach all 720 rotation classes, but the number it must complete can vary. The distinction can already be seen at the six-letter context $012345$. Its missing symbol is $6$, so the context identifies the class of $0123456$ even when the next letter is another $5$. Shorthand universal cycles similarly identify a permutation by appending its missing symbol to an $(n-1)$-letter factor~\cite{shorthand}. They require every such factor to occur in a circular word. For a visit in our linear word, any one of the seven contexts belonging to a class suffices. To complete that class, all seven rotations must occur as actual seven-letter factors.
 
-Theorem~\ref{thm:sevencurve} gives equality for every threshold from 91 to 720 completed classes. Corollary~\ref{cor:decision} isolates a single one-letter boundary at threshold 91. We then establish the exact minimum in two restricted settings and give a lower bound on the number of letters needed to extend a fixed prefix. The concluding section describes a Boolean instance whose checked refutation would settle the unrestricted problem.
+Let $M_k$ be the minimum length of a word that visits every class and completes at least $k$. Inserting $6012345$ at the end of the context $012345$ completes its class and returns to the same context. The corresponding insertion at each incomplete class gives $L(7)\le M_k+7(720-k)$. The substantive direction is to recover a partial word from a shortest full word with the same saving. Theorem~\ref{thm:sevencurve} proves this for $91\le k\le720$ by bounding the number of cycles needed to join the residual components. Thus the equality concerns the minimum over all partial words. Section~\ref{sec:decision} applies it at $k=91$ to obtain the decision at length 1,501.
 
 \section{Rotation classes and the residual graph}
 \label{sec:graph}
@@ -81,29 +83,65 @@ If $X$ is feasible for $s,t$ and $|X|\le858$, at most $91$ weak
 components of $X$ outside the component of $s$ contain an edge.
 \end{lemma}
 
-\noindent\emph{Structure of the certificate.}
-The proof also counts wheels already extracted from $X$. Write
-$X=Y+T$, with $T$ the multiset sum of $a$ complete wheels, and let $b$
-count the noninitial edge-containing components of $Y$. The checked
-inequalities first give $a+b\le92$ and
-$3(a+b)+22B\le308$, where $B$ counts those $b$ components having at
-least seven edges. At $a+b=92$ there is at most one such component.
-A short noninitial component in this boundary analysis is itself a wheel.
-If all are short, extracting them would give 92 wheels and a complementary
-306-edge route visiting 260 classes. The finite check in
-\texttt{NormalizedClosed306} and \texttt{Cap92Lookup} rules out the
-required connected coverage. Starting from the route labels, one must be able to reach all 720 labels by adjoining wheels that meet the current union.
+\begin{proof}
+Let $b$ be the number of noninitial components with an edge and $B$ the
+number of these with at least seven edges. For each component let $c$ be
+the number of distinct rotation labels it meets, and put
+$r=\sum\max(c-1,0)$, with the sum over all components, including the one containing $s$. Connecting the 720
+labels requires $r\ge719$, since a component meeting $c$ labels can
+supply at most $\max(c-1,0)$ independent joins. Write $e$ for a component's edge count and $h=\max(c-1,0)$. The initial route has $45h\le38e+59$. Each noninitial component containing an edge has at least six edges and satisfies
+\[
+  45h+3+22\,\mathbf1_{e\ge7}\le38e.
+\]
+These are the open-route and closed-circuit estimates combined in \texttt{VirtualComponentPrice}. Summing them and using $|X|\le858$ gives
+\[
+  3b+22B\le38\cdot858+59-45\cdot719=308.
+\]
+Suppose $b\ge92$.
+Then $B\le1$. Every noninitial component with fewer than seven edges is a
+six-edge wheel. Indeed, the first edge entering such a component from outside in $D+X$ must belong to $D$, so its endpoint has six distinct symbols. The component is balanced and has an Euler circuit based there. Returning to that context takes at least six steps, and at six steps all six appended symbols are prescribed.
 
-With one long component, the edge and contact counts leave six numerical
-profiles. The density bound $71c\le60e$ for the long closed routes of
-length $e\ge105$ considered here ($c$ is their number of labels), and the
-period constraint on a 28-edge circuit, leave a 277-edge initial route
-with 236 labels and a 35-edge circuit with 30. After normalization the
-initial label set has six possible forms. The connected-cover tests for
-these sets and the possible 35-edge circuits are discharged in
-\texttt{Mixed277} and \texttt{MixedRootsExcluded}. The resulting statement
-$a+b\le91$, specialized to $a=0$, is
-\texttt{EqualityComponent91.component\_limit}. 
+\smallskip\noindent\emph{At least 92 wheels.} Suppose there are at least 92 such components. This includes every case with $b\ge93$, as well as $b=92$, $B=0$. Set aside any 92 of these wheels. Their complement is a single route by \texttt{pure\_92} in \texttt{BaseWheelFrontier92}. The route has at most $858-6\cdot92=306$ edges. To connect all labels it needs at least $720-5\cdot92=260$ labels of its own, since each attached wheel adds at most five. For a route of $e$ edges with $c$ labels the open-route estimate gives $45c\le38(e+1)+66$. These bounds force $e=306$ and $c=260$. Starting from these labels,
+one can adjoin a wheel as soon as it meets a label already reached.
+Feasibility requires this procedure to reach all 720 labels. Since
+$260+5\cdot92=720$, every added wheel must supply five new labels.
+
+Here the finite test concerns the actual label sets. A normalized
+enumeration of the admissible route labels is certified in \texttt{NormalizedClosed306} and \texttt{FusedPacked92}. The lookup table has 47,603 entries. Forced-wheel certificates exclude 46,958 entries by the following rule. For a specified
+missing label, every wheel containing it except possibly one meets the
+reached set in at least two labels. A wheel with two such contacts would add at most four new labels. A cover must therefore use the sole remaining wheel, if one exists.
+The other 645 entries reduce by symmetry to 322 representatives with
+checked LRAT refutations. Thus no listed set can reach all labels with
+at most 92 wheels (\texttt{Cap92Lookup}).
+
+\smallskip\noindent\emph{One long circuit and 91 wheels.} The remaining case has $b=92$ and $B=1$. Let $u,v$ be the edge counts of the initial route and the long circuit, and $i,j$ their respective label counts.
+The 91 wheels use $546$ edges and supply at most $455$ joins. Thus $u+v\le312$ and $(i-1)+(j-1)\ge719-455=264$. The open-route and closed-circuit label bounds at these lengths leave the six profiles below (\texttt{VirtualLongProfiles}). For $v\ge105$ the circuit bound $71j\le60v$ excludes the first four rows by the indicated excess.
+\begin{center}
+\begin{tabular}{@{}rr@{\qquad}rr@{\qquad}l@{}}\toprule
+\multicolumn{2}{c}{Initial route} & \multicolumn{2}{c}{Long circuit} & \\
+Edges $u$ & Labels $i$ & Edges $v$ & Labels $j$ & Test \\ \midrule
+104 & 90  & 208 & 176 & $71j-60v=16$ \\
+130 & 112 & 182 & 154 & $71j-60v=14$ \\
+156 & 134 & 156 & 132 & $71j-60v=12$ \\
+182 & 156 & 130 & 110 & $71j-60v=10$ \\
+284 & 242 &  28 &  24 & Period constraint \\
+277 & 236 &  35 &  30 & Connected-cover test \\ \bottomrule
+\end{tabular}
+\end{center}
+At length 28, mark one occurrence per distinct label. Saturation at 24 labels would force six marked positions
+in every seven-step interval. The resulting periodic pattern forces at
+least 30 distinct labels (\texttt{ShortWheelPeriod}).
+
+In the remaining profile the 236 initial labels form one of six sets $R$
+after normalization. The circuit labels form a set $F$ of 30 classes
+obtained by fixing the cyclic order of five of the seven symbols. Some $p\in F$ must be
+reachable from $R$ using ordinary wheels before the circuit is used.
+Thus those wheels alone must span from $R\cup(F\setminus\{p\})$
+(\texttt{LargeRowParent}). This enlarged starting set has at most $236+29=265$ labels and needs all 265 since $265+5\cdot91=720$. There are $\binom{7}{5}(5-1)!=504$ possible sets $F$. Among the $6\cdot504$ pairs $(R,F)$, 64 intersect in exactly one label, 218 are disjoint, and the other 2,742 share at least two labels. For a pair with one common label, only that choice of $p$ gives 265 starting labels. For disjoint sets, each of the 30 choices attains this size. Thus $64+218\cdot30=6{,}604$ triples attain the necessary size. Forced-wheel certificates exclude 6,024. The other 580 reduce to 290
+representatives with checked LRAT refutations (\texttt{Mixed277}).
+Hence no such starting set permits a connected cover by 91 or fewer wheels. This exhausts
+the possibilities for $b\ge92$.
+\end{proof}
 
 \begin{theorem}[Minimum length at a completion threshold]\label{thm:sevencurve}
 For $91\le k\le720$,
@@ -144,6 +182,14 @@ three counts. Inserting $k-67$ cycles gives the required upper bound
 $1334+7(k-67)=5905-7(720-k)$. This proves~\eqref{eq:sevencurve}
 in both cases.
 \end{proof}
+
+\begin{corollary}[Cost of one additional completion]\label{cor:marginal}
+For $91\le k<720$, one has $M_{k+1}-M_k=7$.
+\end{corollary}
+\begin{proof}
+Subtract the identity of Theorem~\ref{thm:sevencurve} at $k$ from the identity at $k+1$ and rearrange.
+\end{proof}
+The two minima allow different words. The seven-letter difference therefore holds even when the entire word is chosen anew for the higher threshold.
 
 \section{A one-letter boundary for 91 completions}
 \label{sec:decision}
@@ -239,9 +285,13 @@ The supplementary archive includes the Lean source for the component bound and t
 Jaehun Jung set the research questions, directed the sequence of investigations, and specified the standard of verification. OpenAI Codex (GPT-6) was used to develop proof arguments, write Lean and verification code, conduct computational experiments, and draft the manuscript. The constructions, external bounds, and formal libraries used here are credited in the references and the supplement.
 
 \begin{thebibliography}{9}
+\bibitem{ashlock} D. A. Ashlock and J. Tillotson, Construction of small superpermutations and minimal injective superstrings, \emph{Congressus Numerantium} \textbf{93} (1993), 91--98.
+\bibitem{engenvatter} M. Engen and V. Vatter, Containing all permutations, \emph{American Mathematical Monthly} \textbf{128} (2021), 4--24. \href{https://doi.org/10.1080/00029890.2021.1835384}{Published article}, \href{https://arxiv.org/abs/1810.08252}{preprint}.
+\bibitem{shorthand} A. E. Holroyd, F. Ruskey and A. Williams, Shorthand universal cycles for permutations, \emph{Algorithmica} \textbf{64} (2012), 215--245. \href{https://doi.org/10.1007/s00453-011-9544-z}{Published article}.
+\bibitem{halfardefect} J. Halfar, $s(7)\ge5{,}899$, proved in Lean, Superpermutators research announcement (October 2026). \href{https://groups.google.com/g/superpermutators/c/dmBTmhy0a1A}{Statement of the defect characterization and proof sources}.
 \bibitem{houston} R. Houston, \emph{Tackling the Minimal Superpermutation Problem}, arXiv:1408.5108 (2014). \href{https://arxiv.org/abs/1408.5108}{Preprint}.
 \bibitem{halfar} J. Halfar, \emph{A superpermutation on seven symbols has at least 5,901 letters}, proof and certificate inventory, revision \texttt{8e3c02b} (2026). \href{https://github.com/jhalfar/superpermutations/tree/8e3c02b5234b49a1422751f86f9e472706082374/proofs/n7_5901}{Proof and computation} and \href{https://github.com/jhalfar/superpermutation-almanac-lean/tree/a09f9ef4ebb74ae1297f17c5fad38296695f2959}{Lean library}.
-\bibitem{ties} J. Halfar, \emph{Seven-symbol record classes}, catalogue and source inventory (2026). \href{https://github.com/jhalfar/superpermutations/tree/main/ties}{Catalogue}.
+\bibitem{ties} J. Halfar, \emph{Seven-symbol record classes}, catalogue and source inventory (2026). \href{https://github.com/jhalfar/superpermutations/tree/8e3c02b5234b49a1422751f86f9e472706082374/ties}{Catalogue}.
 \bibitem{teodorescu} A. Teodorescu, W-0021, \emph{Superpermutation Almanac}, 17 August 2026. \href{https://superpermutations.com/w/W-0021}{Word and coverage statistics}.
 \end{thebibliography}
 \end{document}

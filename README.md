@@ -14,6 +14,8 @@ $$
 M_k+7(720-k)=L(7) \qquad (91\leq k\leq 720).
 $$
 
+For $91 \leq k < 720$, raising the completion requirement by one therefore raises the minimum length by exactly seven letters, even when the word is chosen anew.
+
 In particular, $L(7)\leq 5904$ if and only if a word of exactly 1,501 letters visits every class and completes 91. The paper exhibits two words visiting all 720 classes. One completes 90 at length 1,501, and the other completes 91 at length 1,502. Whether 91 completions are possible at length 1,501 remains open.
 
 The known interval $5901\leq L(7)\leq5905$ uses Jakub Halfar’s computer-assisted lower bound and Andrei Teodorescu’s length-5,905 word W-0021. The supplement derives its examples from W-0021 and checks a separate restricted-family result against 98 record classes in Halfar’s catalogue. [Halfar’s lower-bound proof](https://github.com/jhalfar/superpermutations/tree/8e3c02b5234b49a1422751f86f9e472706082374/proofs/n7_5901) · [Teodorescu’s W-0021](https://superpermutations.com/w/W-0021) · [Record catalogue](https://github.com/jhalfar/superpermutations/tree/8e3c02b5234b49a1422751f86f9e472706082374/ties)
