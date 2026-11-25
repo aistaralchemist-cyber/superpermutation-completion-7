@@ -41,6 +41,10 @@ The checker also finds 716 visited classes and 608 distinct permutations in the 
 
 The ZIP’s SHA-256 digest is `0f58e7441ccd42c12119ebb988d9874f30822863b93d31e5463b0e03c90c41fd`. Its 614 entries consist of 613 files and their checksum manifest. All 613 digests were checked. To repeat this check in the extracted directory, run `shasum -a 256 -c SHA256SUMS` on macOS or `sha256sum -c SHA256SUMS` on Linux.
 
+## Price-137 search supplement (25 November 2026)
+
+The open computation asks whether 2 through 9 directed trails and wheel packets can cover all 720 rotation classes at price 137. The download includes the branch search, archived profile counts, W-0021 positive control and Lean sources for the reduction and normalization. No branch-wide infeasibility certificate accompanies the release. [Run guide](PRICE137.md) · [Download the search supplement](price137-search.zip)
+
 ## Authorship and source credits
 
 Jaehun Jung set the research questions and directed the investigation. OpenAI Codex (GPT-6) assisted with the mathematical arguments, Lean development, computational experiments, and manuscript preparation. The supplement credits the external proofs, data, and formal libraries used in the paper. Teodorescu’s W-0021 is reproduced under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
